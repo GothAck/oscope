@@ -20,7 +20,6 @@ Window {
             id: videoOut
             Layout.fillHeight: true
             Layout.fillWidth: true
-            source: stream.mediaPlayer
         }
         ColumnLayout {
             Layout.fillHeight: true
@@ -47,7 +46,7 @@ Window {
             }
             TextInput {
                 id: address
-                text: "10.99.98.15"
+                text: "192.168.1.251"
             }
             Label {
                 text: stream.socketState

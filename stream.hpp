@@ -6,6 +6,7 @@
 #include <QBuffer>
 #include <QDataStream>
 #include <QMediaPlayer>
+#include <QFile>
 
 #include "socket.hpp"
 
@@ -44,9 +45,11 @@ signals:
 private:
     Socket *_socket;
     QTcpSocket::SocketState _socketState = QTcpSocket::UnconnectedState;
-    QBuffer *_buffer;
-    QDataStream *_stream;
     QMediaPlayer *_player;
+    QBuffer *_buffer;
+    QFile *_file;
+
+    QDataStream *_stream;
 
     bool _isRunning = false;
     bool _isSingle = false;

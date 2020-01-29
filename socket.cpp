@@ -86,8 +86,11 @@ void Socket::onSocketReadReady() {
                 _state = 0;
                 break;
             }
-            auto data = _socket->read(bytes < _frameLen ? bytes : _frameLen);
-            emit bytesAvailable(data);
+            QByteArray data = _socket->read(bytes < _frameLen ? bytes : _frameLen);
+            auto shared = std::make_shared<QByteArray>(data.constData(), data.size());
+            qDebug() << "WUT" << data.size() << bytes;
+            emit bytesAvailable(shared);
+            bytes -= data.size();
             _frameLen -= data.size();
             if (_frameLen <= 0) {
                 _state = 0;

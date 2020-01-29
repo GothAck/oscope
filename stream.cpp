@@ -1,3 +1,5 @@
+#include <memory>
+
 #include <QtEndian>
 #include <QDebug>
 #include <QtConcurrent>
@@ -7,20 +9,24 @@
 Stream::Stream(QObject *parent) :
     QObject(parent),
     _socket(new Socket(this)),
+    _player(new QMediaPlayer(this, QMediaPlayer::StreamPlayback)),
     _buffer(new QBuffer(this)),
-    _stream(new QDataStream(_buffer)),
-    _player(new QMediaPlayer(this, QMediaPlayer::StreamPlayback))
+    _file(new QFile("/tmp/oscope.dump", this)),
+    _stream(new QDataStream(_file))
     {
+        _file->open(QFile::WriteOnly);
         _buffer->open(QBuffer::ReadWrite);
         _socket->start();
         connect(_socket, &Socket::socketStateChanged, [this](QTcpSocket::SocketState state) {
             _socketState = state;
             emit socketStateChanged();
         });
-        connect(_socket, &Socket::bytesAvailable, [this](QByteArray bytes) {
-            _buffer->write(bytes);
-            _player->setMedia(QMediaContent(), _buffer);
-            _player->play();
+        connect(_socket, &Socket::bytesAvailable, [this](std::shared_ptr<QByteArray> bytes) {
+//            _buffer->write(bytes);
+            qDebug() << "Stream write" << bytes->size();
+            _stream->writeRawData(bytes->data(), bytes->size());
+//            _player->setMedia(QMediaContent(), _buffer);
+//            _player->play();
         });
         connect(_socket, &Socket::setIsRunning, [this](bool isRunning) {
             qDebug() << "setIsRunning" << isRunning;

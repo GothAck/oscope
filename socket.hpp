@@ -1,6 +1,8 @@
 #ifndef SOCKET_HPP
 #define SOCKET_HPP
 
+#include <memory>
+
 #include <QObject>
 #include <QThread>
 #include <QTcpSocket>
@@ -18,7 +20,7 @@ public:
 
 signals:
     void socketStateChanged(QTcpSocket::SocketState);
-    void bytesAvailable(QByteArray array);
+    void bytesAvailable(std::shared_ptr<QByteArray> array);
     void connectToHost(QString host);
     void disconnectFromHost();
     void setIsRunning(bool isRunning);
