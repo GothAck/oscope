@@ -9,6 +9,7 @@
 #include <QFile>
 
 #include "socket.hpp"
+#include "customvideosurface.hpp"
 
 class Stream : public QObject
 {
@@ -20,6 +21,7 @@ class Stream : public QObject
     Q_PROPERTY(bool isAuto READ isAuto NOTIFY isAutoChanged)
     Q_PROPERTY(bool isConnected READ isConnected NOTIFY socketStateChanged)
     Q_PROPERTY(QMediaPlayer *mediaPlayer READ mediaPlayer NOTIFY mediaPlayerChanged)
+    Q_PROPERTY(QAbstractVideoSurface *surface READ surface WRITE setSurface NOTIFY surfaceChanged)
 public:
     explicit Stream(QObject *parent = nullptr);
 
@@ -33,6 +35,8 @@ public:
     bool isAuto();
     bool isConnected();
     QMediaPlayer *mediaPlayer();
+    QAbstractVideoSurface *surface();
+    void setSurface(QAbstractVideoSurface *);
 
 signals:
     void socketStateChanged();
@@ -41,6 +45,7 @@ signals:
     void isSingleChanged(bool isSingle);
     void isAutoChanged(bool isAuto);
     void mediaPlayerChanged();
+    void surfaceChanged();
 
 private:
     Socket *_socket;
@@ -48,8 +53,10 @@ private:
     QMediaPlayer *_player;
     QBuffer *_buffer;
     QFile *_file;
+    std::shared_ptr<QVideoFrame> _currentFrame;
 
     QDataStream *_stream;
+    QAbstractVideoSurface *_surface = nullptr;
 
     bool _isRunning = false;
     bool _isSingle = false;

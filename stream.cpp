@@ -23,29 +23,34 @@ Stream::Stream(QObject *parent) :
         });
         connect(_socket, &Socket::bytesAvailable, [this](std::shared_ptr<QByteArray> bytes) {
 //            _buffer->write(bytes);
-            qDebug() << "Stream write" << bytes->size();
+//            qDebug() << "Stream write" << bytes->size();
             _stream->writeRawData(bytes->data(), bytes->size());
 //            _player->setMedia(QMediaContent(), _buffer);
 //            _player->play();
         });
         connect(_socket, &Socket::setIsRunning, [this](bool isRunning) {
-            qDebug() << "setIsRunning" << isRunning;
+//            qDebug() << "setIsRunning" << isRunning;
             _isRunning = isRunning;
             isRunningChanged(_isRunning);
         });
         connect(_socket, &Socket::setIsSingle, [this](bool isSingle) {
-            qDebug() << "setIsSingle" << isSingle;
+//            qDebug() << "setIsSingle" << isSingle;
             _isSingle = isSingle;
             isSingleChanged(_isSingle);
         });
         connect(_socket, &Socket::setIsAuto, [this](bool isAuto) {
-            qDebug() << "setIsAuto" << isAuto;
+//            qDebug() << "setIsAuto" << isAuto;
             _isAuto = isAuto;
             isAutoChanged(_isAuto);
         });
         connect(this, &Stream::destroyed, [this] {
             _socket->quit();
             _socket->wait(1000);
+        });
+        connect(_socket, &Socket::frameAvailable, [this](std::shared_ptr<QVideoFrame> frame) {
+            if (_surface)
+                qDebug() << "present" << _surface->present(*frame);
+            _currentFrame = frame;
         });
     }
 
@@ -84,5 +89,14 @@ bool Stream::isConnected() {
 
 QMediaPlayer *Stream::mediaPlayer() {
     return _player;
+}
+
+QAbstractVideoSurface *Stream::surface() {
+    return _surface;
+}
+
+void Stream::setSurface(QAbstractVideoSurface *surface) {
+    _surface = surface;
+    emit surfaceChanged();
 }
 

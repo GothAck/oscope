@@ -8,11 +8,15 @@ import oscope 1.0
 
 Window {
     visible: true
-    width: 740
-    height: 480
+    width: 1000
+    height: 600
     title: qsTr("OScope")
+    CustomVideoSurface {
+        id: surface
+    }
     Stream {
         id: stream
+        surface: surface.videoSurface
     }
     RowLayout {
         anchors.fill: parent
@@ -20,12 +24,16 @@ Window {
             id: videoOut
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.minimumHeight: 600
+            Layout.minimumWidth: 800
+            source: surface
+            visible: true
         }
         ColumnLayout {
             Layout.fillHeight: true
-            Layout.preferredWidth: 150
-            Layout.minimumWidth: 150
-            Layout.maximumWidth: 150
+            Layout.preferredWidth: 200
+            Layout.minimumWidth: 200
+            Layout.maximumWidth: 200
             ToolButton {
                 text: "RUN"
             }

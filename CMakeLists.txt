@@ -24,10 +24,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
+include(FindPkgConfig)
+
+pkg_check_modules(OPENH264 REQUIRED openh264)
+
 find_package(Qt5 COMPONENTS Core Quick Concurrent Multimedia REQUIRED)
 
 if(ANDROID)
     add_library(micsig SHARED
+        customvideosurface.hpp
+        customvideosurface.cpp
         socket.hpp
         socket.cpp
         stream.cpp
@@ -37,6 +43,8 @@ if(ANDROID)
     )
 else()
     add_executable(micsig
+        customvideosurface.hpp
+        customvideosurface.cpp
         socket.hpp
         socket.cpp
         stream.cpp
@@ -49,4 +57,4 @@ endif()
 target_compile_definitions(micsig
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(micsig
-  PRIVATE Qt5::Core Qt5::Quick Qt5::Concurrent Qt5::Multimedia)
+    PRIVATE Qt5::Core Qt5::Quick Qt5::Concurrent Qt5::Multimedia ${OPENH264_LIBRARIES})
