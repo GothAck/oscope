@@ -1,6 +1,3 @@
-#ifndef SOCKET_HPP
-#define SOCKET_HPP
-
 #include <memory>
 
 #include <QObject>
@@ -16,6 +13,8 @@ extern "C" {
 #include "libavutil/mathematics.h"
 #include "libswscale/swscale.h"
 }
+
+#pragma once
 
 class Scope;
 
@@ -73,5 +72,3 @@ private:
     bool _isSingle = false;
     bool _isAuto = false;
 };
-
-#endif // SOCKET_HPP

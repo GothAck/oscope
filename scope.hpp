@@ -1,6 +1,3 @@
-#ifndef STREAM_HPP
-#define STREAM_HPP
-
 #include <QObject>
 #include <QTcpSocket>
 #include <QBuffer>
@@ -10,6 +7,8 @@
 
 #include "socket.hpp"
 #include "customvideosurface.hpp"
+
+#pragma once
 
 class Scope : public QObject
 {
@@ -72,5 +71,3 @@ private:
     bool _isSingle = false;
     bool _isAuto = false;
 };
-
-#endif // STREAM_HPP
