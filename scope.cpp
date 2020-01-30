@@ -23,8 +23,6 @@ Scope::Scope(QObject *parent) :
         });
         connect(_socket, &Socket::bytesAvailable, [this](std::shared_ptr<QByteArray> bytes) {
             _stream->writeRawData(bytes->data(), bytes->size());
-//            _player->setMedia(QMediaContent(), _buffer);
-//            _player->play();
         });
         connect(_socket, &Socket::setIsRunning, [this](bool isRunning) {
 //            qDebug() << "setIsRunning" << isRunning;
