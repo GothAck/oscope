@@ -90,10 +90,9 @@ void Scope::halfButtonEvent(bool pressed) {
     commonButtonEvent(49, pressed);
 }
 void Scope::commonButtonEvent(uint8_t button, bool pressed) {
-    auto b = std::make_shared<QByteArray>(_commonButtonData);
+    auto b = std::make_shared<QByteArray>(_commonButtonData, 12);
     b->data()[4] = button;
     b->data()[11] = pressed;
-    qDebug() << *b;
     emit _socket->sendEvent(b);
 }
 
