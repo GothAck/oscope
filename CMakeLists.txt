@@ -52,6 +52,7 @@ else()
         scope.cpp
         scope.hpp
         main.cpp
+        icon.rc
         qml.qrc
     )
 endif()
@@ -79,12 +80,16 @@ function(icons)
         BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png
     )
     list(APPEND icon_targets "icon_${res}")
-    # install(TARGETS icon_${res} ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png DESTINATION icons/hicolor/${res}x${res})
+    list(APPEND icon_files "${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png")
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png DESTINATION icons/hicolor/${res}x${res})
   endforeach()
 
+  add_custom_target(win_ico
+    COMMAND icotool -c -o oscope.ico ${icon_files}
+  )
+
   add_custom_target(icons DEPENDS ${icon_targets})
-  add_dependencies(micsig icons)
+  add_dependencies(micsig icons win_ico)
 endfunction()
 
 icons(256 128 64 32 16)
