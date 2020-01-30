@@ -12,6 +12,7 @@ ApplicationWindow {
     width: 1250
     height: 600
     title: qsTr("OScope")
+    onClosing: scope.quit()
 
     header: ToolBar {
         id: toolbar

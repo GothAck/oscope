@@ -22,21 +22,36 @@ Socket::Socket(Scope *parent) :
         picture = av_frame_alloc();
         sws = sws_getContext(800, 600, AV_PIX_FMT_YUV420P, 800, 600, AV_PIX_FMT_RGB32, 0, 0, 0, 0);
 
+        connect(this, &Socket::destroyed, [this]{
+            av_packet_free(&pkt);
+            codec = avcodec_find_decoder(AV_CODEC_ID_H264);
+            av_parser_close(parser);
+            avcodec_free_context(&c);
+            av_frame_free(&picture);
+            sws_freeContext(sws);
+        });
+
         picture->width = 800;
         picture->height = 600;
         if (avcodec_open2(c, codec, NULL) < 0) {
             return;
         }
 
+        connect(this, &QThread::finished, [this] {
+            _socket->disconnectFromHost();
+        });
+
         connect(_socket, &QTcpSocket::stateChanged, this, &Socket::socketStateChanged);
         connect(_socket, &QTcpSocket::readyRead, this, &Socket::onSocketReadReady);
         connect(this, &Socket::connectToHost, [this](QString host) {
+            this->start();
             qDebug() << "connectToHost" << host;
            _socket->connectToHost(host, 8888) ;
         });
         connect(this, &Socket::disconnectFromHost, [this]{
             qDebug() << "disconnectFromHost";
            _socket->disconnectFromHost();
+           this->terminate();
         });
 
         connect(this, &Socket::sendEvent, this, &Socket::onSendEvent);

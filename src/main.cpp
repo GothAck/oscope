@@ -46,5 +46,8 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
-    return app.exec();
+    int ret = app.exec();
+    discovery->quit();
+    discovery->wait(1000);
+    return ret;
 }

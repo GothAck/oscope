@@ -34,6 +34,8 @@ public:
     Q_INVOKABLE void autoButtonEvent(bool pressed);
     Q_INVOKABLE void halfButtonEvent(bool pressed);
 
+    Q_INVOKABLE void quit();
+
     QString socketState();
     QBuffer *buffer();
     bool isRunning();
@@ -54,17 +56,16 @@ signals:
     void surfaceChanged();
 
 private:
-    Socket *_socket;
+    Socket *_socket = nullptr;
     QTcpSocket::SocketState _socketState = QTcpSocket::UnconnectedState;
-    QMediaPlayer *_player;
-    QBuffer *_buffer;
-    QFile *_file;
+    QMediaPlayer *_player = nullptr;
+    QBuffer *_buffer = nullptr;
+    QFile *_file = nullptr;
     std::shared_ptr<QVideoFrame> _currentFrame;
 
-    QDataStream *_stream;
+    QDataStream *_stream = nullptr;
     QAbstractVideoSurface *_surface = nullptr;
 
-    const char *_commonButtonData = "\x02\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x01";
     void commonButtonEvent(uint8_t button, bool pressed);
 
     bool _isRunning = false;
