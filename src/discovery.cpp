@@ -38,8 +38,6 @@ Discovery::Discovery(QObject *parent) :
                     _discovered[sender]->deleteLater();
                 }
                 _discovered[sender] = new DiscoveredNode(sender, id, this);
-                qDebug() << _discovered[sender]->name;
-                qDebug() << _discovered[sender]->address;
                 emit discoveredChanged();
             }
         });
