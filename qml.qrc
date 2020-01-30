@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file alias="icon.png">build/icons/hicolor/256x256/oscope.png</file>
     </qresource>
 </RCC>

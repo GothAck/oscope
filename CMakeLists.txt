@@ -23,8 +23,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
 #    endif()
 #endif()
-
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(FindPkgConfig)
+include(Icons)
+
+icons(256 128 64 32 16)
 
 pkg_check_modules(AVCODEC REQUIRED libavcodec)
 pkg_check_modules(AVUTIL REQUIRED libavutil)
@@ -33,29 +36,33 @@ pkg_check_modules(SWS REQUIRED libswscale)
 find_package(Qt5 COMPONENTS Core Quick Concurrent Multimedia REQUIRED)
 
 if(ANDROID)
-    add_library(micsig SHARED
-        customvideosurface.hpp
-        customvideosurface.cpp
-        socket.hpp
-        socket.cpp
-        scope.cpp
-        scope.hpp
-        main.cpp
+    add_library(
+        micsig SHARED
+        src/customvideosurface.hpp
+        src/customvideosurface.cpp
+        src/socket.hpp
+        src/socket.cpp
+        src/scope.cpp
+        src/scope.hpp
+        src/main.cpp
         qml.qrc
     )
 else()
-    add_executable(micsig
-        customvideosurface.hpp
-        customvideosurface.cpp
-        socket.hpp
-        socket.cpp
-        scope.cpp
-        scope.hpp
-        main.cpp
-        icon.rc
+    add_executable(
+        micsig
+        src/customvideosurface.hpp
+        src/customvideosurface.cpp
+        src/socket.hpp
+        src/socket.cpp
+        src/scope.cpp
+        src/scope.hpp
+        src/main.cpp
+        resources/icon.rc
         qml.qrc
     )
 endif()
+
+add_dependencies(micsig icons)
 
 install(TARGETS micsig
         RUNTIME DESTINATION bin
@@ -70,29 +77,7 @@ target_link_libraries(micsig
 
 add_custom_target(appdir COMMAND cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=/usr COMMAND DESTDIR=AppDir ninja install)
 
-function(icons)
-  set(icon_targets "")
-  set(icon_files "")
-  foreach(res IN LISTS ARGN)
-    add_custom_target(icon_${res}
-        COMMAND mkdir -p icons/hicolor/${res}x${res}
-        COMMAND inkscape -z -e icons/hicolor/${res}x${res}/oscope.png -w ${res} -h ${res} ${CMAKE_CURRENT_SOURCE_DIR}/icon/oscope.svg
-        BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png
-    )
-    list(APPEND icon_targets "icon_${res}")
-    list(APPEND icon_files "${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png DESTINATION icons/hicolor/${res}x${res})
-  endforeach()
 
-  add_custom_target(win_ico
-    COMMAND icotool -c -o oscope.ico ${icon_files}
-  )
-
-  add_custom_target(icons DEPENDS ${icon_targets})
-  add_dependencies(micsig icons win_ico)
-endfunction()
-
-icons(256 128 64 32 16)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/oscope.desktop DESTINATION share/applications)
 
