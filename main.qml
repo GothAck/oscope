@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+import Qt.labs.settings 1.1
 import QtMultimedia 5.14
 
 import oscope 1.0
@@ -15,7 +16,10 @@ Window {
         color: "black"
         anchors.fill: parent
     }
-
+    Settings {
+        id: settings
+        property alias address: addressField.text
+    }
     CustomVideoSurface {
         id: surface
     }
@@ -92,7 +96,7 @@ Window {
             ToolButton {
                 Layout.fillWidth: true
                 text: scope.isConnected ? "Disconnect" : "Connect"
-                onClicked: if (scope.isConnected) { scope.disconnectFromScope() } else { scope.connectToScope(addressField) }
+                onClicked: if (scope.isConnected) { scope.disconnectFromScope() } else { scope.connectToScope(addressField.text) }
             }
         }
     }
