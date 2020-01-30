@@ -3,6 +3,7 @@
 #include <QQmlContext>
 
 #include "scope.hpp"
+#include "discovery.hpp"
 #include "customvideosurface.hpp"
 
 int main(int argc, char *argv[])
@@ -17,7 +18,13 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     qmlRegisterType<Scope>("oscope", 1, 0, "Scope");
+    qmlRegisterUncreatableType<Discovery>("oscope", 1, 0, "Discovery", "C++ only");
+    qmlRegisterUncreatableType<DiscoveredNode>("oscope", 1, 0, "DiscoveredNode", "C++ only");
     qmlRegisterType<CustomVideoSurface>("oscope", 1, 0, "CustomVideoSurface");
+
+    auto discovery = new Discovery(&app);
+    discovery->start();
+    engine.rootContext()->setContextProperty("discovery", discovery);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

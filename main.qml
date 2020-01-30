@@ -9,7 +9,7 @@ import oscope 1.0
 
 Window {
     visible: true
-    width: 1000
+    width: 1250
     height: 600
     title: qsTr("OScope")
     Rectangle {
@@ -49,54 +49,79 @@ Window {
                 scope.mouseEvent(rx, ry, pressed);
             }
         }
-        ColumnLayout {
+        Rectangle {
             Layout.fillHeight: true
-            Layout.preferredWidth: 200
-            Layout.minimumWidth: 200
-            Layout.maximumWidth: 200
-            ToolButton {
-                Layout.fillWidth: true
-                text: scope.isRunning ? "STOP" : "RUN"
-                onPressedChanged: scope.runButtonEvent(pressed)
-            }
-            ToolButton {
-                Layout.fillWidth: true
-                text: "SEQ"
-                onPressedChanged: scope.singleButtonEvent(pressed)
-            }
-            ToolButton {
-                Layout.fillWidth: true
-                text: "AUTO"
-                onPressedChanged: scope.autoButtonEvent(pressed)
-            }
-            ToolButton {
-                Layout.fillWidth: true
-                text: "50%"
-                onPressedChanged: scope.halfButtonEvent(pressed)
-            }
-            ToolButton {
-                Layout.fillWidth: true
-                text: "HOME"
-                onPressedChanged: scope.homeButtonEvent(pressed)
-            }
-            ToolButton {
-                Layout.fillWidth: true
-                text: "UP"
-            }
-            TextField {
-                Layout.fillWidth: true
-                id: addressField
-                text: settings.value("address", "192.168.1.21")
-                onTextEdited: this.address = text
-            }
-            Label {
-                Layout.fillWidth: true
-                text: scope.socketState
-            }
-            ToolButton {
-                Layout.fillWidth: true
-                text: scope.isConnected ? "Disconnect" : "Connect"
-                onClicked: if (scope.isConnected) { scope.disconnectFromScope() } else { scope.connectToScope(addressField.text) }
+            Layout.preferredWidth: 450
+            Layout.minimumWidth: 450
+            Layout.maximumWidth: 450
+            color: "white"
+            ColumnLayout {
+                anchors.fill: parent
+                ToolButton {
+                    Layout.fillWidth: true
+                    text: scope.isRunning ? "STOP" : "RUN"
+                    onPressedChanged: scope.runButtonEvent(pressed)
+                }
+                ToolButton {
+                    Layout.fillWidth: true
+                    text: "SEQ"
+                    onPressedChanged: scope.singleButtonEvent(pressed)
+                }
+                ToolButton {
+                    Layout.fillWidth: true
+                    text: "AUTO"
+                    onPressedChanged: scope.autoButtonEvent(pressed)
+                }
+                ToolButton {
+                    Layout.fillWidth: true
+                    text: "50%"
+                    onPressedChanged: scope.halfButtonEvent(pressed)
+                }
+                ToolButton {
+                    Layout.fillWidth: true
+                    text: "HOME"
+                    onPressedChanged: scope.homeButtonEvent(pressed)
+                }
+                ToolButton {
+                    Layout.fillWidth: true
+                    text: "UP"
+                }
+                TextField {
+                    Layout.fillWidth: true
+                    id: addressField
+                }
+                Label {
+                    Layout.fillWidth: true
+                    id: discoveredLabel
+                    text: "0 discovered"
+                }
+
+                ComboBox {
+                    id: discoveredNodes
+                    Layout.fillWidth: true
+                    onModelChanged: {
+                        discoveredLabel.text = count + " discovered"
+                    }
+                    model: discovery.discovered
+                    delegate: ItemDelegate {
+                        enabled: !scope.isConnected
+                        width: discoveredNodes.width
+                        contentItem: Text {
+                            text: modelData.name
+                        }
+                        onClicked: addressField.text = modelData.address
+                    }
+                }
+
+                Label {
+                    Layout.fillWidth: true
+                    text: scope.socketState
+                }
+                ToolButton {
+                    Layout.fillWidth: true
+                    text: scope.isConnected ? "Disconnect" : "Connect"
+                    onClicked: if (scope.isConnected) { scope.disconnectFromScope() } else { scope.connectToScope(addressField.text) }
+                }
             }
         }
     }

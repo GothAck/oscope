@@ -38,6 +38,8 @@ find_package(Qt5 COMPONENTS Core Quick Concurrent Multimedia REQUIRED)
 if(ANDROID)
     add_library(
         micsig SHARED
+        src/discovery.hpp
+        src/discovery.cpp
         src/customvideosurface.hpp
         src/customvideosurface.cpp
         src/socket.hpp
@@ -50,6 +52,8 @@ if(ANDROID)
 else()
     add_executable(
         micsig
+        src/discovery.hpp
+        src/discovery.cpp
         src/customvideosurface.hpp
         src/customvideosurface.cpp
         src/socket.hpp
