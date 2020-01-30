@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(micsig LANGUAGES CXX)
+project(oscope LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -37,7 +37,7 @@ find_package(Qt5 COMPONENTS Core Quick Concurrent Multimedia Gui REQUIRED)
 
 if(ANDROID)
     add_library(
-        micsig SHARED
+        oscope SHARED
         src/discovery.hpp
         src/discovery.cpp
         src/customvideosurface.hpp
@@ -51,7 +51,7 @@ if(ANDROID)
     )
 else()
     add_executable(
-        micsig
+        oscope
         src/discovery.hpp
         src/discovery.cpp
         src/customvideosurface.hpp
@@ -66,23 +66,27 @@ else()
     )
 endif()
 
-add_dependencies(micsig icons)
+add_dependencies(oscope icons)
 
-install(TARGETS micsig
+install(TARGETS oscope
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib/static)
 
-target_compile_definitions(micsig
+target_compile_definitions(oscope
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(micsig
+target_link_libraries(oscope
     PRIVATE Qt5::Core Qt5::Quick Qt5::Concurrent Qt5::Multimedia Qt5::Gui ${AVCODEC_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWS_LIBRARIES})
 
 
-add_custom_target(appdir COMMAND cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=/usr COMMAND DESTDIR=AppDir ninja install)
+add_custom_target(appdir
+    COMMAND cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=/usr
+    COMMAND DESTDIR=AppDir ninja install
+    COMMAND cp AppDir/usr/share/applications/oscope.desktop AppDir
+    COMMAND cp AppDir/usr/share/icons/hicolor/256x256/oscope.png AppDir
+)
 
 
-
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/oscope.desktop DESTINATION share/applications)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/oscope.desktop DESTINATION share/applications)
 
 # install(FILES )

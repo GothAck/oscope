@@ -9,7 +9,7 @@ function(icons)
     )
     list(APPEND icon_targets "icon_${res}")
     list(APPEND icon_files "${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png DESTINATION icons/hicolor/${res}x${res})
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png DESTINATION share/icons/hicolor/${res}x${res})
   endforeach()
 
   add_custom_target(win_ico
