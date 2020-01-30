@@ -56,7 +56,39 @@ else()
     )
 endif()
 
+install(TARGETS micsig
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib/static)
+
 target_compile_definitions(micsig
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(micsig
     PRIVATE Qt5::Core Qt5::Quick Qt5::Concurrent Qt5::Multimedia ${AVCODEC_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWS_LIBRARIES})
+
+
+add_custom_target(appdir COMMAND cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=/usr COMMAND DESTDIR=AppDir ninja install)
+
+function(icons)
+  set(icon_targets "")
+  set(icon_files "")
+  foreach(res IN LISTS ARGN)
+    add_custom_target(icon_${res}
+        COMMAND mkdir -p icons/hicolor/${res}x${res}
+        COMMAND inkscape -z -e icons/hicolor/${res}x${res}/oscope.png -w ${res} -h ${res} ${CMAKE_CURRENT_SOURCE_DIR}/icon/oscope.svg
+        BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png
+    )
+    list(APPEND icon_targets "icon_${res}")
+    # install(TARGETS icon_${res} ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png DESTINATION icons/hicolor/${res}x${res})
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/icons/hicolor/${res}x${res}/oscope.png DESTINATION icons/hicolor/${res}x${res})
+  endforeach()
+
+  add_custom_target(icons DEPENDS ${icon_targets})
+  add_dependencies(micsig icons)
+endfunction()
+
+icons(256 128 64 32 16)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/oscope.desktop DESTINATION share/applications)
+
+# install(FILES )

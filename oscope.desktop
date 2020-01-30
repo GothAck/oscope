@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=OScope
+Exec=oscope %F
+Icon=oscope
+Type=Application
+Categories=Science;Education
+Comment=Micsig Oscilloscope Remote Control
+Name[en]=OScope
+Terminal=false
+StartupNotify=true
+NoDisplay=false
