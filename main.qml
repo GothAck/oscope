@@ -59,7 +59,8 @@ Window {
                 anchors.fill: parent
                 ToolButton {
                     Layout.fillWidth: true
-                    text: scope.isRunning ? "STOP" : "RUN"
+                    text: scope.isRunning ? ICON_FA_STOP : ICON_FA_PLAY
+                    font.family: "FontAwesome"
                     onPressedChanged: scope.runButtonEvent(pressed)
                 }
                 ToolButton {
@@ -79,12 +80,14 @@ Window {
                 }
                 ToolButton {
                     Layout.fillWidth: true
-                    text: "HOME"
+                    text: ICON_FA_HOME
+                    font.family: "FontAwesome"
                     onPressedChanged: scope.homeButtonEvent(pressed)
                 }
                 ToolButton {
                     Layout.fillWidth: true
-                    text: "UP"
+                    text: ICON_FA_EJECT
+                    font.family: "FontAwesome"
                 }
                 TextField {
                     Layout.fillWidth: true

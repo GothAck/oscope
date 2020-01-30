@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file alias="fontawesome5solid.otf">vendor/Font Awesome 5 Free-Solid-900.otf</file>
+        <file alias="fontawesome5regular.otf">vendor/Font Awesome 5 Free-Regular-400.otf</file>
     </qresource>
 </RCC>

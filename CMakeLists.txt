@@ -33,7 +33,7 @@ pkg_check_modules(AVCODEC REQUIRED libavcodec)
 pkg_check_modules(AVUTIL REQUIRED libavutil)
 pkg_check_modules(SWS REQUIRED libswscale)
 
-find_package(Qt5 COMPONENTS Core Quick Concurrent Multimedia REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick Concurrent Multimedia Gui REQUIRED)
 
 if(ANDROID)
     add_library(
@@ -76,7 +76,7 @@ install(TARGETS micsig
 target_compile_definitions(micsig
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(micsig
-    PRIVATE Qt5::Core Qt5::Quick Qt5::Concurrent Qt5::Multimedia ${AVCODEC_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWS_LIBRARIES})
+    PRIVATE Qt5::Core Qt5::Quick Qt5::Concurrent Qt5::Multimedia Qt5::Gui ${AVCODEC_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWS_LIBRARIES})
 
 
 add_custom_target(appdir COMMAND cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=/usr COMMAND DESTDIR=AppDir ninja install)
