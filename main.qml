@@ -9,7 +9,7 @@ import oscope 1.0
 
 ApplicationWindow {
     visible: true
-    width: 1250
+    width: 900
     height: 600
     title: qsTr("OScope")
     onClosing: scope.quit()
@@ -80,13 +80,21 @@ ApplicationWindow {
                 id: videoOut
                 source: surface
                 visible: true
-                fillMode: VideoOutput.Stretch
             }
 
             onPressedChanged: {
-                var rx = mouseX * 800 / width;
-                var ry = mouseY * 600 / height;
-                scope.mouseEvent(rx, ry, pressed);
+                var contentRect = videoOut.contentRect;
+                var x = mouseX;
+                var y = mouseY;
+                x -= contentRect.x;
+                y -= contentRect.y;
+                if (x < 0 || y < 0) return;
+                x /= contentRect.width;
+                y /= contentRect.height;
+                if (x > 1 || y > 1) return;
+                x *= 800;
+                y *= 600;
+                scope.mouseEvent(x, y, pressed);
             }
         }
         ToolBar {
