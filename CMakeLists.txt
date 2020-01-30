@@ -26,7 +26,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FindPkgConfig)
 
-pkg_check_modules(OPENH264 REQUIRED openh264)
+pkg_check_modules(AVCODEC REQUIRED libavcodec)
+pkg_check_modules(AVUTIL REQUIRED libavutil)
+pkg_check_modules(SWS REQUIRED libswscale)
 
 find_package(Qt5 COMPONENTS Core Quick Concurrent Multimedia REQUIRED)
 
@@ -36,8 +38,8 @@ if(ANDROID)
         customvideosurface.cpp
         socket.hpp
         socket.cpp
-        stream.cpp
-        stream.hpp
+        scope.cpp
+        scope.hpp
         main.cpp
         qml.qrc
     )
@@ -47,8 +49,8 @@ else()
         customvideosurface.cpp
         socket.hpp
         socket.cpp
-        stream.cpp
-        stream.hpp
+        scope.cpp
+        scope.hpp
         main.cpp
         qml.qrc
     )
@@ -57,4 +59,4 @@ endif()
 target_compile_definitions(micsig
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(micsig
-    PRIVATE Qt5::Core Qt5::Quick Qt5::Concurrent Qt5::Multimedia ${OPENH264_LIBRARIES})
+    PRIVATE Qt5::Core Qt5::Quick Qt5::Concurrent Qt5::Multimedia ${AVCODEC_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWS_LIBRARIES})

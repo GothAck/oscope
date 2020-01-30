@@ -4,9 +4,9 @@
 #include <QDebug>
 #include <QtConcurrent>
 
-#include "stream.hpp"
+#include "scope.hpp"
 
-Stream::Stream(QObject *parent) :
+Scope::Scope(QObject *parent) :
     QObject(parent),
     _socket(new Socket(this)),
     _player(new QMediaPlayer(this, QMediaPlayer::StreamPlayback)),
@@ -22,8 +22,6 @@ Stream::Stream(QObject *parent) :
             emit socketStateChanged();
         });
         connect(_socket, &Socket::bytesAvailable, [this](std::shared_ptr<QByteArray> bytes) {
-//            _buffer->write(bytes);
-//            qDebug() << "Stream write" << bytes->size();
             _stream->writeRawData(bytes->data(), bytes->size());
 //            _player->setMedia(QMediaContent(), _buffer);
 //            _player->play();
@@ -43,59 +41,96 @@ Stream::Stream(QObject *parent) :
             _isAuto = isAuto;
             isAutoChanged(_isAuto);
         });
-        connect(this, &Stream::destroyed, [this] {
+        connect(this, &Scope::destroyed, [this] {
             _socket->quit();
             _socket->wait(1000);
         });
         connect(_socket, &Socket::frameAvailable, [this](std::shared_ptr<QVideoFrame> frame) {
             if (_surface)
-                qDebug() << "present" << _surface->present(*frame);
+                _surface->present(*frame);
             _currentFrame = frame;
         });
     }
 
-void Stream::connectToScope(QString address) {
+void Scope::connectToScope(QString address) {
     _socket->connectToHost(address);
 }
 
-void Stream::disconnectFromScope() {
+void Scope::disconnectFromScope() {
     _socket->disconnectFromHost();
 }
 
-QString Stream::socketState() {
+void Scope::mouseEvent(quint32 x, quint32 y, bool pressed) {
+    auto b = std::make_shared<QByteArray>();
+    QByteArray num(4, 0);
+    b->append(1);
+    b->append(!!pressed);
+    b->append((uint8_t)0);
+    b->append((uint8_t)0);
+    qToLittleEndian<quint32>(&x, 4, num.data());
+    b->append(num);
+    qToLittleEndian<quint32>(&y, 4, num.data());
+    b->append(num);
+    emit _socket->sendEvent(b);
+}
+
+void Scope::homeButtonEvent(bool pressed) {
+    commonButtonEvent(97, pressed);
+}
+void Scope::runButtonEvent(bool pressed) {
+    commonButtonEvent(8, pressed);
+}
+void Scope::singleButtonEvent(bool pressed) {
+    commonButtonEvent(9, pressed);
+}
+void Scope::autoButtonEvent(bool pressed) {
+    commonButtonEvent(48, pressed);
+}
+void Scope::halfButtonEvent(bool pressed) {
+    commonButtonEvent(49, pressed);
+}
+void Scope::commonButtonEvent(uint8_t button, bool pressed) {
+    auto b = std::make_shared<QByteArray>(_commonButtonData);
+    b->data()[4] = button;
+    b->data()[11] = pressed;
+    qDebug() << *b;
+    emit _socket->sendEvent(b);
+}
+
+QString Scope::socketState() {
     auto metaEnum = QMetaEnum::fromType<QTcpSocket::SocketState>();
     return QString(metaEnum.valueToKey(_socketState)).replace("State", "");
 }
 
-QBuffer *Stream::buffer() {
+QBuffer *Scope::buffer() {
     return _buffer;
 }
 
-bool Stream::isRunning() {
+bool Scope::isRunning() {
     return _isRunning;
 }
 
-bool Stream::isSingle() {
+bool Scope::isSingle() {
     return _isSingle;
 }
 
-bool Stream::isAuto() {
+bool Scope::isAuto() {
     return _isAuto;
 }
 
-bool Stream::isConnected() {
+bool Scope::isConnected() {
     return _socketState != QTcpSocket::UnconnectedState;
 }
 
-QMediaPlayer *Stream::mediaPlayer() {
+QMediaPlayer *Scope::mediaPlayer() {
     return _player;
 }
 
-QAbstractVideoSurface *Stream::surface() {
+QAbstractVideoSurface *Scope::surface() {
     return _surface;
 }
 
-void Stream::setSurface(QAbstractVideoSurface *surface) {
+void Scope::setSurface(QAbstractVideoSurface *surface) {
     _surface = surface;
     emit surfaceChanged();
 }

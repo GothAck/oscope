@@ -11,23 +11,39 @@ Window {
     width: 1000
     height: 600
     title: qsTr("OScope")
+    Rectangle {
+        color: "black"
+        anchors.fill: parent
+    }
+
     CustomVideoSurface {
         id: surface
     }
-    Stream {
-        id: stream
+    Scope {
+        id: scope
         surface: surface.videoSurface
     }
     RowLayout {
         anchors.fill: parent
-        VideoOutput {
-            id: videoOut
+        MouseArea {
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.minimumHeight: 600
             Layout.minimumWidth: 800
-            source: surface
-            visible: true
+
+            VideoOutput {
+                anchors.fill: parent
+                id: videoOut
+                source: surface
+                visible: true
+                fillMode: VideoOutput.Stretch
+            }
+
+            onPressedChanged: {
+                var rx = mouseX * 800 / width;
+                var ry = mouseY * 600 / height;
+                scope.mouseEvent(rx, ry, pressed);
+            }
         }
         ColumnLayout {
             Layout.fillHeight: true
@@ -35,33 +51,48 @@ Window {
             Layout.minimumWidth: 200
             Layout.maximumWidth: 200
             ToolButton {
-                text: "RUN"
+                Layout.fillWidth: true
+                text: scope.isRunning ? "STOP" : "RUN"
+                onPressedChanged: scope.runButtonEvent(pressed)
             }
             ToolButton {
+                Layout.fillWidth: true
                 text: "SEQ"
+                onPressedChanged: scope.singleButtonEvent(pressed)
             }
             ToolButton {
+                Layout.fillWidth: true
                 text: "AUTO"
+                onPressedChanged: scope.autoButtonEvent(pressed)
             }
             ToolButton {
+                Layout.fillWidth: true
                 text: "50%"
+                onPressedChanged: scope.halfButtonEvent(pressed)
             }
             ToolButton {
+                Layout.fillWidth: true
                 text: "HOME"
+                onPressedChanged: scope.homeButtonEvent(pressed)
             }
             ToolButton {
+                Layout.fillWidth: true
                 text: "UP"
             }
-            TextInput {
-                id: address
-                text: "192.168.1.251"
+            TextField {
+                Layout.fillWidth: true
+                id: addressField
+                text: settings.value("address", "192.168.1.21")
+                onTextEdited: this.address = text
             }
             Label {
-                text: stream.socketState
+                Layout.fillWidth: true
+                text: scope.socketState
             }
             ToolButton {
-                text: stream.isConnected ? "Disconnect" : "Connect"
-                onClicked: if (stream.isConnected) { stream.disconnectFromScope() } else { stream.connectToScope(address.text) }
+                Layout.fillWidth: true
+                text: scope.isConnected ? "Disconnect" : "Connect"
+                onClicked: if (scope.isConnected) { scope.disconnectFromScope() } else { scope.connectToScope(addressField) }
             }
         }
     }

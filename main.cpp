@@ -1,18 +1,22 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
-#include "stream.hpp"
+#include "scope.hpp"
 #include "customvideosurface.hpp"
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setOrganizationName("GothAck");
+    QCoreApplication::setOrganizationDomain("gothack.ninja");
+    QCoreApplication::setApplicationName("OScope");
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
 
-    qmlRegisterType<Stream>("oscope", 1, 0, "Stream");
+    qmlRegisterType<Scope>("oscope", 1, 0, "Scope");
     qmlRegisterType<CustomVideoSurface>("oscope", 1, 0, "CustomVideoSurface");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));

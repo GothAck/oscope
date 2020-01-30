@@ -4,7 +4,7 @@
 
 CustomVideoSurface::CustomVideoSurface(QObject *parent) :
     QObject(parent),
-    _format(QSize {800, 600}, QVideoFrame::Format_YV12, QAbstractVideoBuffer::NoHandle)
+    _format(QSize {800, 600}, QVideoFrame::Format_YUV420P, QAbstractVideoBuffer::NoHandle)
     {}
 
 
