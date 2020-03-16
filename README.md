@@ -1,3 +1,5 @@
+![BeerPay](https://img.shields.io/beerpay/GothAck/oscope)
+
 # oscope - remote control for Micsig scopes without Android
 
 Micsig provide an Android apk for remote control of their networked scopes. I noticed video compression and delved into reverse engineering the protocol.
